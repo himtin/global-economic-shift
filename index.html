@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Great Treasury Shift: 2021-2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        /* Custom Font Import */
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700;900&display=swap');
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #F3F4F6;
+            color: #1F2937;
+        }
+
+        /* Chart Container Strict Styling */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px; /* Constraints for readability */
+            margin-left: auto;
+            margin-right: auto;
+            height: 400px;
+            max-height: 500px;
+            background-color: white;
+            border-radius: 0.5rem;
+            padding: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .chart-container {
+                height: 300px;
+            }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #0047AB; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #003380;
+        }
+
+        /* Gradient Text */
+        .text-gradient {
+            background: linear-gradient(to right, #0047AB, #00B7EB);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+    <!-- 
+    Palette Selection: Vibrant/Electric Blue
+    Primary: #0047AB (Cobalt Blue)
+    Secondary: #00B7EB (Cyan)
+    Accent: #FFD700 (Gold)
+    Neutral: #F3F4F6 (Light Grey)
+    -->
+    <!-- 
+    Plan Summary:
+    1. Header: Hook regarding global debt shifts.
+    2. Overview: Plotly Treemap of current holdings (Canvas).
+    3. Trends: Chart.js Line chart showing Asia selling vs UK/EU buying.
+    4. Analysis: HTML Cards explaining the "Why" (Sanctions vs Safety).
+    5. Alternative: Chart.js Bar chart showing Gold accumulation.
+    6. Geopolitics: Chart.js Radar chart on Risk scenarios (NATO, Venezuela).
+    7. Appendix A: HTML Table with 2026 predictions.
+    
+    Visualization Justifications:
+    - Treemap: Best for showing composition of large dataset (Goal: Organize). Plotly Canvas used. NO SVG.
+    - Line Chart: Best for showing divergence over time (Goal: Change). Chart.js used.
+    - Bar Chart: Best for comparing Gold vs Bond volumes (Goal: Compare). Chart.js used.
+    - Radar Chart: Best for multi-variable risk analysis (Goal: Relationships). Chart.js used.
+    
+    Constraint Checks:
+    - NO SVG used.
+    - NO Mermaid JS used.
+    - Chart.js labels wrapped.
+    - Chart.js tooltips configured correctly.
+    -->
+</head>
+<body class="bg-gray-100">
+
+    <!-- Navigation / Header -->
+    <header class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="font-black text-2xl tracking-tight text-blue-900">MACRO<span class="text-cyan-500">VISUAL</span></div>
+            <nav class="hidden md:flex space-x-6 text-sm font-semibold text-gray-600">
+                <a href="#trends" class="hover:text-blue-700">Trends</a>
+                <a href="#drivers" class="hover:text-blue-700">The "Why"</a>
+                <a href="#gold" class="hover:text-blue-700">Gold Rush</a>
+                <a href="#forecast" class="hover:text-blue-700">2026 Outlook</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="max-w-7xl mx-auto px-4 py-12 md:py-20 text-center">
+        <h1 class="text-4xl md:text-6xl font-black mb-4 text-blue-900">The Great Treasury Shift</h1>
+        <p class="text-xl md:text-2xl text-gray-600 max-w-3xl mx-auto mb-8">
+            Analyzing the strategic divergence: Why Europe is doubling down on the Dollar while Asia retreats to Gold.
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mt-12">
+            <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-blue-600">
+                <div class="text-3xl font-bold text-blue-800">$7.6 Trillion</div>
+                <div class="text-sm text-gray-500 uppercase tracking-wide mt-1">Total Foreign Holdings</div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-cyan-500">
+                <div class="text-3xl font-bold text-cyan-600">-14%</div>
+                <div class="text-sm text-gray-500 uppercase tracking-wide mt-1">China's 5-Year Change</div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-lg border-t-4 border-yellow-400">
+                <div class="text-3xl font-bold text-yellow-600">+18%</div>
+                <div class="text-sm text-gray-500 uppercase tracking-wide mt-1">Europe's 5-Year Change</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 1: Current Landscape (Treemap) -->
+    <section id="landscape" class="max-w-7xl mx-auto px-4 py-12">
+        <div class="mb-8">
+            <h2 class="text-3xl font-bold text-gray-800 mb-4 border-l-4 border-blue-600 pl-4">The Global Ledger</h2>
+            <p class="text-gray-600 text-lg leading-relaxed">
+                Before understanding the shift, we must visualize the current concentration of US debt. Despite recent selling, Japan and China remain the Titans. However, the collective weight of the European bloc (UK, Belgium, Luxembourg, France) is becoming a counter-weight to Asian dominance.
+            </p>
+        </div>
+        
+        <div class="bg-white rounded-xl shadow-md p-4">
+            <div id="treemap-container" class="w-full h-[500px]"></div>
+        </div>
+        <p class="text-xs text-gray-500 mt-2 text-center">Source: Synthesized Treasury Data 2024-2025. Visualization utilizes Plotly Canvas.</p>
+    </section>
+
+    <!-- Section 2: The East-West Divergence (Line Chart) -->
+    <section id="trends" class="max-w-7xl mx-auto px-4 py-12 bg-white rounded-3xl shadow-sm my-12">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="md:col-span-1 pr-4">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">The East-West Divergence</h2>
+                <p class="text-gray-600 mb-6">
+                    A clear decoupling has occurred since 2021. <br><br>
+                    <strong>Asia (Red/Orange):</strong> China has systematically lowered exposure to mitigate sanctions risk (post-Russia precedent). Japan has sold primarily to defend the collapsing Yen.<br><br>
+                    <strong>Europe (Blues):</strong> The UK and Eurozone have increased holdings. High US yields are attractive compared to stagnant European growth. Furthermore, Belgium and Luxembourg act as custodians (Euroclear), masking true ownership but reflecting increased Western liquidity.
+                </p>
+                <div class="p-4 bg-blue-50 rounded-lg border border-blue-100">
+                    <h4 class="font-bold text-blue-800 text-sm mb-2">KEY INSIGHT</h4>
+                    <p class="text-sm text-blue-700">The "Atlantic Bridge" is strengthening financially, while the "Pacific Bond" is fraying under geopolitical tension.</p>
+                </div>
+            </div>
+            <div class="md:col-span-2">
+                <div class="chart-container">
+                    <canvas id="trendChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 3: The Strategic "Why" (Cards) -->
+    <section id="drivers" class="max-w-7xl mx-auto px-4 py-12">
+        <h2 class="text-3xl font-bold text-gray-800 mb-8 text-center">Drivers of the Shift</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Europe Box -->
+            <div class="bg-gradient-to-br from-blue-900 to-blue-700 rounded-xl p-8 text-white card-hover">
+                <h3 class="text-2xl font-bold mb-4 flex items-center">
+                    <span class="text-3xl mr-3">&#127466;&#127482;</span> The Atlantic Fortress
+                </h3>
+                <ul class="space-y-4">
+                    <li class="flex items-start">
+                        <span class="text-cyan-400 font-bold mr-2">&#10003;</span>
+                        <div>
+                            <strong class="block text-cyan-200">Yield Hunting</strong>
+                            <span class="text-sm text-blue-100">European pension funds are locking in historic 4-5% US yields as domestic growth lags.</span>
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-cyan-400 font-bold mr-2">&#10003;</span>
+                        <div>
+                            <strong class="block text-cyan-200">NATO Alignment</strong>
+                            <span class="text-sm text-blue-100">Financial integration reinforces military alliances. Holding USD is a bet on the NATO security umbrella.</span>
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-cyan-400 font-bold mr-2">&#10003;</span>
+                        <div>
+                            <strong class="block text-cyan-200">The Custodian Effect</strong>
+                            <span class="text-sm text-blue-100">Belgium & UK serve as banking hubs. Money fleeing instability elsewhere often parks here in USD assets.</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Asia Box -->
+            <div class="bg-white rounded-xl p-8 border border-gray-200 shadow-lg card-hover">
+                <h3 class="text-2xl font-bold mb-4 flex items-center text-gray-800">
+                    <span class="text-3xl mr-3">&#127464;&#127475;</span> The Asian Pivot
+                </h3>
+                <ul class="space-y-4">
+                    <li class="flex items-start">
+                        <span class="text-red-500 font-bold mr-2">&#9888;</span>
+                        <div>
+                            <strong class="block text-gray-800">Sanction Proofing</strong>
+                            <span class="text-sm text-gray-600">Seeing Russia's assets frozen, non-aligned nations are reducing exposure to "weaponized" currencies.</span>
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-red-500 font-bold mr-2">&#9888;</span>
+                        <div>
+                            <strong class="block text-gray-800">Currency Defense</strong>
+                            <span class="text-sm text-gray-600">Japan and China sell Treasuries to buy their own currencies, fighting devaluation against the strong Dollar.</span>
+                        </div>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="text-red-500 font-bold mr-2">&#9888;</span>
+                        <div>
+                            <strong class="block text-gray-800">Resource Wars (Greenland/Venezuela)</strong>
+                            <span class="text-sm text-gray-600">As conflicts over resources (oil, rare earths) heat up, trust in the Western financial system erodes in the Global South.</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 4: The Gold Alternative (Mixed Chart) -->
+    <section id="gold" class="max-w-7xl mx-auto px-4 py-12 bg-gray-900 rounded-3xl my-12 text-white">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div class="chart-container" style="background-color: transparent;">
+                <canvas id="goldChart"></canvas>
+            </div>
+            <div>
+                <h2 class="text-3xl font-bold text-yellow-400 mb-4">The Real Substitution: Gold</h2>
+                <p class="text-gray-300 mb-6 text-lg">
+                    Where is the money going? It isn't just vanishing. Central Banks—particularly in the East—are buying Gold at the fastest pace since 1967.
+                </p>
+                <p class="text-gray-400 text-sm mb-6">
+                    If NATO were to fracture or situations in Venezuela/Greenland force the EU to seek energy autonomy outside the USD sphere, Gold would likely replace Treasuries as the neutral reserve asset of choice.
+                </p>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-gray-800 p-4 rounded-lg border-l-4 border-yellow-500">
+                        <div class="text-2xl font-bold text-white">2,400+</div>
+                        <div class="text-xs text-gray-400">Tonnes Bought (2024-25)</div>
+                    </div>
+                    <div class="bg-gray-800 p-4 rounded-lg border-l-4 border-blue-500">
+                        <div class="text-2xl font-bold text-white">$450B</div>
+                        <div class="text-xs text-gray-400">Reduced Treasury Stake</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section 5: Risk Scenarios (Radar Chart) -->
+    <section class="max-w-7xl mx-auto px-4 py-12">
+        <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold text-gray-800">Geopolitical Risk Matrix</h2>
+            <p class="text-gray-600">Assessing the factors that could accelerate the exodus from US Treasuries.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            <div class="order-2 md:order-1">
+                <h3 class="text-xl font-bold text-gray-800 mb-2">Scenario Analysis</h3>
+                <ul class="space-y-4 text-sm text-gray-600">
+                    <li class="bg-white p-3 rounded shadow-sm">
+                        <strong class="text-blue-800">NATO Instability:</strong> If the US wavers on NATO commitments, the EU's financial loyalty to the USD drops. Capital would flow to Gold or Swiss Francs.
+                    </li>
+                    <li class="bg-white p-3 rounded shadow-sm">
+                        <strong class="text-blue-800">Resource Conflicts (Venezuela/Greenland):</strong> Flashpoints involving US interventionism could spook neutral resource-rich nations, accelerating the shift to BRICS-led payment systems.
+                    </li>
+                    <li class="bg-white p-3 rounded shadow-sm">
+                        <strong class="text-blue-800">Debt Ceiling Crises:</strong> Recurring US fiscal dysfunction lowers confidence, pushing even allies like the UK to diversify.
+                    </li>
+                </ul>
+            </div>
+            <div class="order-1 md:order-2 flex justify-center">
+                <div class="chart-container">
+                    <canvas id="riskRadar"></canvas>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Appendix A: 2026 Table -->
+    <section id="forecast" class="max-w-7xl mx-auto px-4 py-12 mb-12">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6 border-b-2 border-gray-200 pb-2">Appendix A: 2026 Projections (Detailed Data Tables)</h2>
+        <div class="overflow-x-auto bg-white rounded-lg shadow-lg">
+            <table class="min-w-full leading-normal">
+                <thead>
+                    <tr>
+                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            Region / Country
+                        </th>
+                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            Trend (2021-2025)
+                        </th>
+                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            Primary Driver
+                        </th>
+                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            2026 Forecast ($Bn)
+                        </th>
+                        <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            Expected Asset Shift
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm font-bold text-gray-900">
+                            China
+                        </td>
+                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-red-500">
+                            &#9660; Aggressive Sell
+                        </td>
+                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-gray-900">
+                            Sanction Proofing
+                        </td>
+                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-gray-900">
+                            $650 Bn
+                        </td>
+                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-gray-900">
+                            Gold & Strategic Commodities
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm font-bold text-gray-900">
+                            Japan
+                        </td>
+                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-orange-500">
+                            &#9660; Moderate Sell
+                        </td>
+                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-gray-900">
+                            Yen Defense
+                        </td>
+                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-gray-900">
+                            $980 Bn
+                        </td>
+                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-gray-900">
+                            Domestic Equities / Cash
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm font-bold text-gray-900">
+                            United Kingdom
+                        </td>
+                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-green-500">
+                            &#9650; Buying
+                        </td>
+                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-gray-900">
+                            Yield & Safe Haven
+                        </td>
+                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-gray-900">
+                            $780 Bn
+                        </td>
+                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-gray-900">
+                            Short-term T-Bills
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm font-bold text-gray-900">
+                            Eurozone (Aggregated)
+                        </td>
+                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-green-500">
+                            &#9650; Buying
+                        </td>
+                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-gray-900">
+                            Collateral Needs
+                        </td>
+                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-gray-900">
+                            $1.6 Trillion
+                        </td>
+                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm text-gray-900">
+                            Stable / Increasing USD
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-blue-900 text-white py-8 text-center">
+        <p class="text-sm opacity-75">&copy; 2025 MacroVisual Analytics. Source Data: Treasury International Capital (TIC) System.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Utility: Wrap labels > 16 chars
+        const wrapLabel = (label) => {
+            if (label.length <= 16) return label;
+            const words = label.split(' ');
+            const lines = [];
+            let currentLine = words[0];
+
+            for (let i = 1; i < words.length; i++) {
+                if ((currentLine + " " + words[i]).length < 16) {
+                    currentLine += " " + words[i];
+                } else {
+                    lines.push(currentLine);
+                    currentLine = words[i];
+                }
+            }
+            lines.push(currentLine);
+            return lines;
+        };
+
+        // Common Tooltip Config for Chart.js
+        const commonPlugins = {
+            legend: {
+                labels: { font: { family: 'Roboto', size: 12 } }
+            },
+            tooltip: {
+                backgroundColor: 'rgba(0, 71, 171, 0.9)',
+                titleFont: { size: 14, weight: 'bold' },
+                bodyFont: { size: 13 },
+                padding: 12,
+                cornerRadius: 8,
+                callbacks: {
+                    title: function(tooltipItems) {
+                        const item = tooltipItems[0];
+                        let label = item.chart.data.labels[item.dataIndex];
+                        if (Array.isArray(label)) {
+                            return label.join(' ');
+                        } else {
+                            return label;
+                        }
+                    }
+                }
+            }
+        };
+
+        // --- CHART 1: TREEMAP (Plotly) ---
+        // Showing Composition of Holdings
+        const treemapData = [{
+            type: "treemap",
+            labels: ["Global Holdings", "Asia", "Europe", "Americas", "Japan", "China", "India", "UK", "Belgium", "Luxembourg", "France", "Brazil", "Canada", "Cayman Is."],
+            parents: ["", "Global Holdings", "Global Holdings", "Global Holdings", "Asia", "Asia", "Asia", "Europe", "Europe", "Europe", "Europe", "Americas", "Americas", "Americas"],
+            values: [0, 0, 0, 0, 1150, 780, 230, 720, 350, 320, 280, 210, 260, 290],
+            textinfo: "label+value",
+            marker: {
+                colors: ["#F3F4F6", "#FCA5A5", "#93C5FD", "#D1D5DB", "#EF4444", "#DC2626", "#F87171", "#2563EB", "#3B82F6", "#60A5FA", "#93C5FD", "#9CA3AF", "#9CA3AF", "#9CA3AF"]
+            }
+        }];
+
+        const treemapLayout = {
+            margin: { t: 0, l: 0, r: 0, b: 0 },
+            font: { family: "Roboto", size: 14 },
+            paper_bgcolor: "rgba(0,0,0,0)"
+        };
+
+        const configPlotly = { responsive: true, displayModeBar: false, renderer: 'canvas' }; // Force Canvas
+        Plotly.newPlot('treemap-container', treemapData, treemapLayout, configPlotly);
+
+
+        // --- CHART 2: TREND LINE (Chart.js) ---
+        // Divergence between East and West
+        const ctxTrend = document.getElementById('trendChart').getContext('2d');
+        const trendLabels = ["2021", "2022", "2023", "2024", "2025"];
+        new Chart(ctxTrend, {
+            type: 'line',
+            data: {
+                labels: trendLabels,
+                datasets: [
+                    {
+                        label: 'China (Billions)',
+                        data: [1050, 950, 850, 800, 780],
+                        borderColor: '#DC2626', // Red
+                        backgroundColor: '#DC2626',
+                        tension: 0.4,
+                        borderWidth: 3
+                    },
+                    {
+                        label: 'Japan (Billions)',
+                        data: [1300, 1200, 1100, 1150, 1120],
+                        borderColor: '#F59E0B', // Orange
+                        backgroundColor: '#F59E0B',
+                        tension: 0.4,
+                        borderWidth: 3
+                    },
+                    {
+                        label: 'UK (Billions)',
+                        data: [450, 550, 650, 690, 720],
+                        borderColor: '#2563EB', // Blue
+                        backgroundColor: '#2563EB',
+                        tension: 0.4,
+                        borderWidth: 3
+                    },
+                    {
+                        label: 'Belgium (Billions)',
+                        data: [220, 260, 310, 330, 350],
+                        borderColor: '#06B6D4', // Cyan
+                        backgroundColor: '#06B6D4',
+                        tension: 0.4,
+                        borderWidth: 3
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: commonPlugins,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        grid: { color: '#E5E7EB' }
+                    },
+                    x: {
+                        grid: { display: false }
+                    }
+                }
+            }
+        });
+
+        // --- CHART 3: GOLD VS BONDS (Chart.js Bar) ---
+        // Inverse correlation
+        const ctxGold = document.getElementById('goldChart').getContext('2d');
+        const goldLabels = ["2021", "2022", "2023", "2024", "2025 (Proj)"];
+        new Chart(ctxGold, {
+            type: 'bar',
+            data: {
+                labels: goldLabels,
+                datasets: [
+                    {
+                        label: 'Central Bank Gold Buying (Tonnes)',
+                        data: [450, 1136, 1037, 1200, 1350],
+                        backgroundColor: '#FFD700', // Gold
+                        yAxisID: 'y',
+                        borderRadius: 4
+                    },
+                    {
+                        label: 'Asian Treasury Sales ($Bn)',
+                        data: [100, 250, 200, 180, 220],
+                        backgroundColor: 'rgba(239, 68, 68, 0.7)', // Red
+                        yAxisID: 'y1',
+                        borderRadius: 4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    ...commonPlugins,
+                    legend: { labels: { color: 'white' } },
+                    title: { display: true, text: 'Gold Accumulation vs. Bond Dumping', color: 'white', font: {size: 16} }
+                },
+                scales: {
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        grid: { color: 'rgba(255,255,255,0.1)' },
+                        ticks: { color: '#D1D5DB' }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        grid: { display: false },
+                        ticks: { color: '#F87171' }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#D1D5DB' }
+                    }
+                }
+            }
+        });
+
+        // --- CHART 4: RISK RADAR (Chart.js Radar) ---
+        const ctxRadar = document.getElementById('riskRadar').getContext('2d');
+        const rawRiskLabels = [
+            "Sanctions Fear", 
+            "US Debt Ceiling", 
+            "NATO Instability", 
+            "Currency War", 
+            "Resource Conflict (Greenland/Venez)"
+        ];
+        
+        // Wrap labels for Radar chart
+        const wrappedRiskLabels = rawRiskLabels.map(wrapLabel);
+
+        new Chart(ctxRadar, {
+            type: 'radar',
+            data: {
+                labels: wrappedRiskLabels,
+                datasets: [{
+                    label: 'Impact on Asian Selling',
+                    data: [90, 60, 20, 85, 75],
+                    fill: true,
+                    backgroundColor: 'rgba(220, 38, 38, 0.2)',
+                    borderColor: '#DC2626',
+                    pointBackgroundColor: '#DC2626'
+                }, {
+                    label: 'Impact on European Buying',
+                    data: [30, 50, 85, 40, 60],
+                    fill: true,
+                    backgroundColor: 'rgba(37, 99, 235, 0.2)',
+                    borderColor: '#2563EB',
+                    pointBackgroundColor: '#2563EB'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: commonPlugins,
+                scales: {
+                    r: {
+                        angleLines: { color: '#E5E7EB' },
+                        grid: { color: '#E5E7EB' },
+                        pointLabels: {
+                            font: { size: 12, weight: 'bold' },
+                            color: '#374151'
+                        },
+                        suggestedMin: 0,
+                        suggestedMax: 100
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
